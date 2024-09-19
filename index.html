@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Calculator</title>
+
+    <!-- Include PyScript -->
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffeef8; 
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff66b2; 
+        }
+
+        label {
+            font-size: 1.2em;
+            color: #ff3399; 
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ff66b2; 
+            border-radius: 5px;
+            width: 200px;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #ff66b2; 
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #ff3385; 
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ff3399; 
+        }
+        p#result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #ff3399; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Grade Calculator</h1>
+    <p> Hi there, friend! Allow me to compute your grades. </p>
+
+    <!-- Input field for prelim grade -->
+    <label for="prelim_grade">Kindly enter your prelim grade (0-100): </label>
+    <input type="number" id="prelim_grade" step="any"><br><br>
+
+    <!-- Button to trigger calculation -->
+    <button id="calculate-btn">Calculate</button>
+
+    <!-- Placeholder for the result -->
+    <p id="result"></p>
+
+    <!-- Python code using PyScript -->
+    <py-script>
+        from pyscript import Element
+
+        def calculate_prelim_grade(*args):
+            try:
+                # Get the prelim grade from the input field
+                prelim_grade = float(Element("prelim_grade").element.value)
+
+                # Validate if prelim grade is within 0-100 range
+                if prelim_grade < 0 or prelim_grade > 100:
+                    raise ValueError("Grade must be between 0 and 100.")
+                
+                # Grading percentages and passing grade
+                prelim_percent = 0.20
+                midterm_percent = 0.30
+                final_percent = 0.50
+                passing_grade = 75
+
+                # Calculate remaining grade needed to pass
+                remaining_grade = passing_grade - (prelim_percent * prelim_grade)
+                required_midterm_grade = remaining_grade / (midterm_percent + final_percent)
+                required_final_grade = remaining_grade / (midterm_percent + final_percent)
+
+                # Prepare the result message based on conditions
+                if required_midterm_grade >= 90 or required_final_grade >= 90:
+                    result_message = f"Prelim Grade: {prelim_grade:.2f}<br>I'm sorry. It's impossible to pass with the given prelim grade. Better luck next time."
+                elif required_midterm_grade <= 71.25 or required_final_grade <= 71.25:
+                    result_message = (
+                        f"Prelim Grade: {prelim_grade:.2f}<br>"
+                        f"Required Midterm Grade: {required_midterm_grade:.2f}<br>"
+                        f"Required Final Grade: {required_final_grade:.2f}<br>"
+                        "You're amazing! You have a chance to be a Dean's Lister!"
+                    )
+                else:
+                    result_message = (
+                        f"Prelim Grade: {prelim_grade:.2f}<br>"
+                        f"Required Midterm Grade: {required_midterm_grade:.2f}<br>"
+                        f"Required Final Grade: {required_final_grade:.2f}<br>"
+                        "Great Job! You have a chance to pass!"
+                    )
+
+                # Display the result
+                Element("result").element.innerHTML = result_message
+
+            except ValueError:
+                # Display error message for invalid input
+                Element("result").element.innerHTML = "Error: Please enter a valid number between 0 and 100."
+
+        # Bind the function to the button click event
+        Element("calculate-btn").element.onclick = calculate_prelim_grade
+    </py-script>
+</body>
+</html>
